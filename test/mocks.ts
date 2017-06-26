@@ -75,6 +75,26 @@ export function component(selector: string) {
   return MyComponent;
 }
 
+export class HooksTestComponentController implements OnInit, OnChanges, DoCheck, OnDestroy, AfterViewInit {
+  constructor() {}
+
+  dummy(): void {}
+
+  test1(): number {
+    return 4;
+  }
+
+  ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {}
+
+  ngDoCheck() {}
+
+  ngOnDestroy() {}
+
+  ngAfterViewInit() {}
+}
+
 export const registerNgModule = (name: string = '',
                                  imports: any[] = [],
                                  declarations: any[] = [],

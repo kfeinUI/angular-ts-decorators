@@ -1,5 +1,6 @@
 import * as angular from 'angular';
-import { component, directive, registerNgModule, TestService } from './mocks';
+import { component, directive, registerNgModule, TestService, HooksTestComponentController } from './mocks';
+import { getHooksOnCtrlClass, replaceLifecycleHooks, ngLifecycleHooksMap } from '../src/lifecycle_hooks';
 
 
 describe('NgModule', () => {
@@ -81,6 +82,13 @@ describe('NgModule', () => {
       });
 
       describe('lifecycle hooks', () => {
+        it('can find angular lifecylce hooks on the controller class', () => {
+          const angularHooksFound: string[] = getHooksOnCtrlClass(HooksTestComponentController.prototype);
+          const numHooks: number = Object.keys(ngLifecycleHooksMap).length;
+
+          expect(angularHooksFound.length).toBe(numHooks);
+        });
+
         it('replaces angular lifecycle hooks to angularjs lifecycle hooks' , () => {
           registerNgModule(moduleName, [], [
             component('camelCaseName')

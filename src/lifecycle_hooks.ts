@@ -1,25 +1,36 @@
-/**
- * @internal
- */
-export enum LifecycleHooks {
-  OnInit,
-  OnDestroy,
-  DoCheck,
-  OnChanges,
-  AfterViewInit
-}
+import { isFunction } from 'angular';
 
 /**
  * @internal
  * @desc Mapping between angular and angularjs LifecycleHooks
  */
-export const ngLifecycleHooksMap = {
-  [LifecycleHooks.OnInit]: '$onInit',
-  [LifecycleHooks.OnDestroy]: '$onDestroy',
-  [LifecycleHooks.DoCheck]: '$doCheck',
-  [LifecycleHooks.OnChanges]: '$onChanges',
-  [LifecycleHooks.AfterViewInit]: '$postLink'
+export const ngLifecycleHooksMap: object = {
+  ngOnInit: '$onInit',
+  ngOnDestroy: '$onDestroy',
+  ngDoCheck: '$doCheck',
+  ngOnChanges: '$onChanges',
+  ngAfterViewInit: '$postLink'
 };
+
+/** @internal */
+export function replaceLifecycleHooks(ctrl: ng.IControllerConstructor): void {
+  const ctrlClass = ctrl.prototype;
+  const ngHooksFound: string[] = getHooksOnCtrlClass(ctrlClass);
+
+  ngHooksFound.forEach((ngHook: string) => {
+    const angularJsHook: string = ngLifecycleHooksMap[ngHook];
+
+    ctrlClass[angularJsHook] = ctrlClass[ngHook];
+
+    delete ctrlClass[ngHook];
+  });
+}
+
+/** @internal */
+export function getHooksOnCtrlClass(ctrlClass: any): string[] {
+  return Object.keys(ngLifecycleHooksMap)
+    .filter((hook: string) => isFunction(ctrlClass[hook]));
+}
 
 /**
  * Represents a basic change from a previous to a new value.
